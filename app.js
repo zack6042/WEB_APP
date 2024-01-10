@@ -9,6 +9,7 @@ const path = require('path'); // Import the 'path' module
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')))
 
 
 app.set('view engine', 'ejs');
@@ -53,8 +54,20 @@ app.get('/login', (req, res) => {
     res.render('index'); 
 });
 app.get('/dash', (req, res) => {
-  res.render('DashBoard'); 
+  // Fetch data from the "departments" table (replace this with your actual database query)
+  connection.query('SELECT * FROM departments', (err, results) => {
+    if (err) {
+      // If there is an error fetching departments from the database, log the error and respond with a 500 status and an error message
+      console.error('Error fetching departments:', err);
+      res.status(500).json({ error: 'Error fetching departments' });
+      return;
+    }
+
+    // If the database query is successful, render the 'DashBoard' view with the fetched department data
+    res.status(200).render('DashBoard', { departments: results });
+  });
 });
+
 
 
 app.post('/api/login', (req, res) => {
@@ -97,26 +110,7 @@ app.get('/users', (req, res) => {
     // If the database query is successful, render the 'users' view with the fetched user data and the username from the session
     res.status(200).render('users', { users: results, username: req.session.username });
   });
-
-  // If the user is logged in, query the database to fetch all records from the 'employee_info' table
-  // connection.query('SELECT * FROM departments', (err, results) => {
-  //   if (err) {
-  //     // If there is an error fetching users from the database, log the error and respond with a 500 status and an error message
-  //     console.error('Error fetching users:', err);
-  //     res.status(500).json({ error: 'Error fetching users' });
-  //     return;
-  //   }
-    
-  //   // If the database query is successful, render the 'users' view with the fetched user data and the username from the session
-  //   res.status(200).render('users', { users: results, username: req.session.username });
-  // });
 })
-
-
-
-
-
-
 
 app.post('/api/adduser', (req, res) => {
   const { name, email, position, department, start_date, current_date_time} = req.body;
@@ -129,16 +123,10 @@ app.post('/api/adduser', (req, res) => {
         res.status(500).json({ error: 'Error inserting data' });
         return;
       }
-
-    
-
       if(result.affectedRows == 1)
       res.status(200).json({ success: true, id: result.insertId, name: name, email: email, position: position, department: department, start_date: start_date, current_date_time:current_date_time });
     }
   );
-
-  
-
 }); 
 
 
