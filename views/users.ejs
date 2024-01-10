@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #007BFF;
+        }
+
+        #addUserForm {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #addUserForm label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #addUserForm input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        #addUserForm input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        .signout {
+            background-color: #dc3545;
+            color: #fff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .signout:hover {
+            background-color: #c82333;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    Welcome back <%= username %> <button class="signout">Sign Out</button>
+</header>
+<h1>Dashboard</h1>
+
+<div class="centered">
+  <!-- Centered Image with width of 300px -->
+  <img src="/path/to/your/image.jpg" alt="Centered Image" width="300">
+</div>
+
+<h3>Add Department</h3>
+
+<!-- Bootstrap Form with Department name -->
+
+ </div>
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <h1>ADD NEW USER</h1>
+    <img src="HR.jpeg" alt="Company Logo" width="200">
+    <form id="addUserForm">
+<form id="addUserForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+    <label for="position">Position:</label>
+    <input type="text" id="position" name="position" required><br><br>
+    <label for="department">Department:</label>
+    <input type="text" id="department" name="department" required><br><br>
+    <label for="start_date">Start Date:</label>
+    <input type="date" id="start_date" name="start_date" required><br><br>
+    <input type="submit" value="Add User">
+</form>
+
+<h1>User List</h1>
+
+<table  border="1">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Position</th>
+        <th>Department</th>
+        <th>Start Date</th>
+        <th>current Date&Time</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody class="my_dash_table">
+    <% users.forEach(user => { %>
+    <tr>
+        <td><%= user.name %></td>
+        <td><%= user.email %></td>
+        <td><%= user.position %></td>
+        <td><%= user.department %></td>
+        <td><%= user.start_date %></td>
+        <td><%= user.current_date_time %></td>
+
+        <td><button class="deleteButton">Delete</button></td>
+    </tr>   
+    <% }); %>
+    </tbody>
+</table> 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+      
+      $(document).on("click",".deleteButton",function(e){
+        e.preventDefault();
+       const del_name= $(this).closest("tr").children(":first").text();
+       $(this).closest("tr").remove();
+       var formData={name:del_name};
+       $.ajax({
+        type: 'DELETE',
+        url: '/api/deleteuser',
+        data: formData,
+        success: function (response, status) {
+            // handle the response here, e.g., update the table
+            
+        },
+        error: function (error) {
+            console.error('Error deleting user:', error);
+        }
+        
+    },
+  
+    
+    
+    );
+
+  });
+        $('#addUserForm').submit(function (e) {
+            e.preventDefault();
+
+            var currentDateAndTime = new Date();
+
+            // Extract individual components
+            var year = currentDateAndTime.getFullYear();
+            var month = ('0' + (currentDateAndTime.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-based
+            var day = ('0' + currentDateAndTime.getDate()).slice(-2);
+            var hours = ('0' + currentDateAndTime.getHours()).slice(-2);
+            var minutes = ('0' + currentDateAndTime.getMinutes()).slice(-2);
+            var seconds = ('0' + currentDateAndTime.getSeconds()).slice(-2);
+            
+            // Format the date and time
+            var formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            var formData = {
+                name: $('#name').val(),
+                email: $('#email').val(),
+                position: $('#position').val(),
+                department: $('#department').val(),
+                start_date: $('#start_date').val(),
+                current_date_time:formattedDateTime
+
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/api/adduser',
+                data: formData,
+                success: function (response, status) {
+                    // handle the response here, e.g., update the table
+                    window.location.reload();
+                },
+                error: function (error) {
+                    console.error('Error adding user:', error);
+                }
+            });
+
+        });
+    
+          $(".signout").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+              type: 'POST',
+              url: '/api/signout',
+              success: function (response, status) {
+                window.history.back();
+                window.location.reload(true);
+              },
+              error: function (error) {
+                console.error('Error signing out:', error);
+              }
+            });
+          });
+    
+        });
+    
+</script>
+</body>
+</html>
+  

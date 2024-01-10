@@ -1,0 +1,17 @@
+::backdrop{background-color: black;}
+    .custom-card {
+      background-color: rgba(255, 255, 255, 0.9); /* Transparent background with high opacity */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    }
+
+    /* Add custom styles for the navbar */
+    .custom-navbar {
+      background-color: #ffffff; /* Change this to the desired color */
+      /* You can add more styles if needed */
+    }
+
+    .jumbotron{
+      color: #337ab7;
+      background-color: #efe4e4;
+    }
+   
